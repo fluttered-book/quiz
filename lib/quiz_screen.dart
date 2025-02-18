@@ -32,24 +32,27 @@ class _QuizScreenState extends State<QuizScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(centerTitle: true, title: const Text("Quiz")),
-      body: Column(
-        children: [
-          ..._buildProgress(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-            child: _buildQuestion(context),
-          ),
-          Expanded(
-            child: Center(
-              child: Column(
-                  mainAxisSize: MainAxisSize.min, children: _buildOptions()),
+    return ListenableBuilder(
+      listenable: model,
+      builder: (context, _) => Scaffold(
+        appBar: AppBar(centerTitle: true, title: const Text("Quiz")),
+        body: Column(
+          children: [
+            ..._buildProgress(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+              child: _buildQuestion(context),
             ),
-          )
-        ],
+            Expanded(
+              child: Center(
+                child: Column(
+                    mainAxisSize: MainAxisSize.min, children: _buildOptions()),
+              ),
+            )
+          ],
+        ),
+        floatingActionButton: _buildActionButton(),
       ),
-      floatingActionButton: _buildActionButton(),
     );
   }
 
