@@ -36,40 +36,43 @@ class _QuizScreenState extends State<QuizScreen> {
       appBar: AppBar(centerTitle: true, title: const Text("Quiz")),
       body: Column(
         children: [
-          ..._buildProgress(model.number, model.total),
+          ..._buildProgress(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-            child: _buildQuestion(context, model.currentQuestion),
+            child: _buildQuestion(context),
           ),
           Expanded(
             child: Center(
               child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: _buildOptions(model.currentQuestion)),
+                  mainAxisSize: MainAxisSize.min, children: _buildOptions()),
             ),
           )
         ],
       ),
-      floatingActionButton: _buildActionButton(model.currentQuestion),
+      floatingActionButton: _buildActionButton(),
     );
   }
 
-  List<Widget> _buildProgress(int number, int total) {
+  List<Widget> _buildProgress() {
     return [
-      LinearProgressIndicator(value: number / total),
+      LinearProgressIndicator(value: model.number / model.total),
       const SizedBox(height: 8),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [const Text('Question:'), Text('$number of $total')],
+          children: [
+            const Text('Question:'),
+            Text('${model.number} of ${model.total}')
+          ],
         ),
       ),
       const Divider(),
     ];
   }
 
-  List<Widget> _buildOptions(Question question) {
+  List<Widget> _buildOptions() {
+    final question = model.currentQuestion;
     return [
       for (final option in question.options)
         if (question.answered != option)
@@ -81,13 +84,14 @@ class _QuizScreenState extends State<QuizScreen> {
     ];
   }
 
-  Text _buildQuestion(BuildContext context, Question question) {
+  Text _buildQuestion(BuildContext context) {
+    final question = model.currentQuestion;
     return Text(question.text,
         style: Theme.of(context).textTheme.headlineLarge);
   }
 
-  Widget? _buildActionButton(Question currentQuestion) {
-    if (model.done || currentQuestion.answered == null) return null;
+  Widget? _buildActionButton() {
+    if (model.done || model.currentQuestion.answered == null) return null;
     if (model.isLastQuestion) {
       return TextButton(
           onPressed: model.nextQuestion, child: const Text("Next"));
