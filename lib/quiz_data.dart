@@ -1,6 +1,6 @@
 import 'quiz_model.dart';
 
-final Quiz quiz = [
+final List<Question> quiz = [
   Question(
     "What is Flutter?",
     options: [

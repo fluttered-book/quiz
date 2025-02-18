@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'quiz_model.dart';
 
 class QuizScreen extends StatefulWidget {
-  final Quiz quiz;
+  final List<Question> quiz;
   const QuizScreen({required this.quiz, super.key});
 
   @override
@@ -11,67 +11,46 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  bool done = false;
-  int index = 0;
-  Quiz get questions => widget.quiz;
-
-  _onOptionPressed(String answer) {
-    setState(() {
-      questions[index].answered = answer;
-    });
+  @override
+  void initState() {
+    super.initState();
+    model = QuizModel(widget.quiz);
   }
 
-  _onNextPressed() {
-    if (index < questions.length - 1) {
-      setState(() {
-        index++;
-      });
-    }
-  }
+  late QuizModel model;
 
-  _onDonePressed(BuildContext context) {
-    setState(() {
-      done = true;
-    });
-    final allCorrect =
-        questions.every((element) => element.answered == element.correct);
+  void _onDonePressed(BuildContext context) {
+    model.markAsDone();
 
     final controller = showModalBottomSheet(
-        context: context,
-        builder: (context) => _buildBottomSheet(context, allCorrect));
+        context: context, builder: (context) => _buildBottomSheet(context));
 
     controller.whenComplete(() {
-      setState(() {
-        index = 0;
-        done = false;
-      });
+      model.resetQuiz();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentQuestion = questions[index];
-    final number = index + 1;
-    final total = questions.length;
     return Scaffold(
       appBar: AppBar(centerTitle: true, title: const Text("Quiz")),
       body: Column(
         children: [
-          ..._buildProgress(number, total),
+          ..._buildProgress(model.number, model.total),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-            child: _buildQuestion(context, currentQuestion),
+            child: _buildQuestion(context, model.currentQuestion),
           ),
           Expanded(
             child: Center(
               child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: _buildOptions(currentQuestion)),
+                  children: _buildOptions(model.currentQuestion)),
             ),
           )
         ],
       ),
-      floatingActionButton: _buildActionButton(currentQuestion),
+      floatingActionButton: _buildActionButton(model.currentQuestion),
     );
   }
 
@@ -95,10 +74,10 @@ class _QuizScreenState extends State<QuizScreen> {
       for (final option in question.options)
         if (question.answered != option)
           OutlinedButton(
-              onPressed: () => _onOptionPressed(option), child: Text(option))
+              onPressed: () => model.selectOption(option), child: Text(option))
         else
           FilledButton(
-              onPressed: () => _onOptionPressed(option), child: Text(option))
+              onPressed: () => model.selectOption(option), child: Text(option))
     ];
   }
 
@@ -108,9 +87,10 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   Widget? _buildActionButton(Question currentQuestion) {
-    if (done || currentQuestion.answered == null) return null;
-    if (index < questions.length - 1) {
-      return TextButton(onPressed: _onNextPressed, child: const Text("Next"));
+    if (model.done || currentQuestion.answered == null) return null;
+    if (model.isLastQuestion) {
+      return TextButton(
+          onPressed: model.nextQuestion, child: const Text("Next"));
     } else {
       return Builder(
         builder: (context) => TextButton(
@@ -120,16 +100,16 @@ class _QuizScreenState extends State<QuizScreen> {
     }
   }
 
-  Widget _buildBottomSheet(BuildContext context, bool allCorrect) {
+  Widget _buildBottomSheet(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Container(
-      color: allCorrect ? Colors.green : Colors.red,
+      color: model.allCorrect ? Colors.green : Colors.red,
       width: double.infinity,
       child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 30.0),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             Text(
-                allCorrect
+                model.allCorrect
                     ? "Hurray 🥳, you are a true expert!"
                     : "😥 you can do better!",
                 style: textTheme.headlineSmall),
