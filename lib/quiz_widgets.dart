@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'quiz_model.dart';
 
 class QuizProgress extends StatelessWidget {
-  final QuizModel model;
-
-  const QuizProgress({required this.model, super.key});
+  const QuizProgress({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final model = context.watch<QuizModel>();
     return Column(
       children: [
         LinearProgressIndicator(value: model.number / model.total),
@@ -30,11 +30,11 @@ class QuizProgress extends StatelessWidget {
 }
 
 class CurrentQuestionWidget extends StatelessWidget {
-  final QuizModel model;
-  const CurrentQuestionWidget({required this.model, super.key});
+  const CurrentQuestionWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final model = context.watch<QuizModel>();
     final question = model.currentQuestion;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
@@ -45,11 +45,11 @@ class CurrentQuestionWidget extends StatelessWidget {
 }
 
 class OptionListWidget extends StatelessWidget {
-  final QuizModel model;
-  const OptionListWidget({required this.model, super.key});
+  const OptionListWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final model = context.watch<QuizModel>();
     final question = model.currentQuestion;
     return Expanded(
       child: Center(
@@ -70,11 +70,11 @@ class OptionListWidget extends StatelessWidget {
 }
 
 class CompletedBottomSheet extends StatelessWidget {
-  final QuizModel model;
-  const CompletedBottomSheet({required this.model, super.key});
+  const CompletedBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final model = context.watch<QuizModel>();
     final textTheme = Theme.of(context).textTheme;
     return Container(
       color: model.allCorrect ? Colors.green : Colors.red,

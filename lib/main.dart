@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:quiz/quiz_model.dart';
 
 import 'quiz_data.dart';
 import 'quiz_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+    create: (_) => QuizModel(quiz),
+    child: MyApp(),
+  ));
 }
 
 const themeColor = Colors.lightGreen;
@@ -22,7 +27,7 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
               seedColor: themeColor, brightness: Brightness.dark)),
-      home: QuizScreen(quiz: quiz),
+      home: QuizScreen(),
     );
   }
 }
