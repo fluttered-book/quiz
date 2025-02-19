@@ -36,7 +36,7 @@ class QuizModel with ChangeNotifier {
   Question get currentQuestion => questions[index];
   int get number => index + 1;
   int get total => questions.length;
-  bool get isLastQuestion => index < questions.length - 1;
+  bool get isLastQuestion => index >= questions.length - 1;
 
   QuizModel(this.questions);
 

@@ -40,7 +40,7 @@ class _QuizScreenState extends State<QuizScreen> {
 
   Widget? _buildActionButton() {
     if (model.done || model.currentQuestion.answered == null) return null;
-    if (model.isLastQuestion) {
+    if (!model.isLastQuestion) {
       return TextButton(
           onPressed: model.nextQuestion, child: const Text("Next"));
     } else {
